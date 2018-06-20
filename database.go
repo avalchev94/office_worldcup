@@ -28,6 +28,7 @@ type User struct {
 	ID       bson.ObjectId `bson:"_id"`
 	Username string        `bson:"username"`
 	Fullname string        `bson:"fullname"`
+  Favourite bson.ObjectId `bson:"favourite"`
 	Password string        `bson:"password"`
 	Role     string        `bson:"role"`
 	Points   int32         `bson:"points"`
@@ -57,13 +58,24 @@ func (db *Database) AddUser(user User) error {
 		return errors.New("already have such user")
 	}
 
-	users.Insert(&user)
-	return nil
+  user.ID = bson.NewObjectId()
+	err := users.Insert(&user)
+	return err
 }
 
 type Team struct {
 	ID   bson.ObjectId `bson:"_id"`
 	Name string        `bson:"name"`
+}
+
+func (db *Database) GetTeams() ([]Team, error) {
+  teams := db.session.DB("world_cup").C("teams")
+	if teams == nil {
+		return nil, errors.New("teams not found")
+	}
+
+  var result []Team
+  return result, teams.Find(nil).All(&result)
 }
 
 func (db *Database) GetTeamByID(id bson.ObjectId) (Team, error) {
@@ -86,6 +98,20 @@ type Match struct {
 	Guest  bson.ObjectId `bson:"guest"`
 	Result string        `bson:"result"`
 	Date   time.Time     `bson:"date"`
+}
+
+func (db *Database) GetMatch(id bson.ObjectId) (Match, error) {
+  matches := db.session.DB("world_cup").C("matches")
+	if matches == nil {
+		return Match{}, errors.New("matches not found")
+	}
+
+  var match Match
+  if (matches.Find(bson.M{"_id":id}).One(&match) != nil) {
+    return Match{}, errors.New("match not found")
+  }
+
+  return match, nil
 }
 
 func (db *Database) GetTodayMatches() ([]Match, error) {
@@ -123,4 +149,19 @@ func (db *Database) GetPrediction(match, user bson.ObjectId) (Prediction, error)
 	}
 
 	return p, nil
+}
+
+func (db *Database) AddPrediction(p Prediction) error {
+  if _, err := db.GetPrediction(p.Match, p.User); err == nil {
+    return errors.New("user has predicted this game already")
+  }
+
+  predictions := db.session.DB("world_cup").C("predictions")
+  if predictions == nil {
+    return errors.New("predictions not found")
+  }
+
+  p.ID = bson.NewObjectId()
+  err := predictions.Insert(&p)
+  return err
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/stretchr/objx"
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"path/filepath"
 	"text/template"
@@ -27,14 +28,21 @@ func authenticated(w http.ResponseWriter, r *http.Request) (User, error) {
 
 	m := objx.MustFromBase64(c.Value)
 	return User{
-		Username: m["username"].(string),
-		Fullname: m["fullname"].(string),
-		Role:     m["role"].(string),
-		Points:   int32(m["points"].(int)),
+		ID:        bson.ObjectIdHex(m["id"].(string)),
+		Username:  m["username"].(string),
+		Favourite: bson.ObjectIdHex(m["favourite"].(string)),
+		Fullname:  m["fullname"].(string),
+		Role:      m["role"].(string),
+		Points:    int32(m["points"].(int)),
 	}, nil
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
+	if _, err := r.Cookie("auth"); err == nil {
+		http.Redirect(w, r, "/", http.StatusPermanentRedirect)
+		return
+	}
+
 	switch r.Method {
 	case "GET":
 		fullpath := filepath.Join(templateFolder, "login.html")
@@ -50,7 +58,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 		db, err := NewDB()
 		defer db.Close()
-
 		if err != nil {
 			w.Write([]byte(err.Error()))
 			return
@@ -68,11 +75,13 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		authCookieVale := objx.New(map[string]interface{}{
-			"username": user.Username,
-			"fullname": user.Fullname,
-			"points":   user.Points,
-			"role":     user.Role,
-			"avatar":   user.Avatar,
+			"id":        user.ID.Hex(),
+			"username":  user.Username,
+			"fullname":  user.Fullname,
+			"favourite": user.Favourite.Hex(),
+			"points":    user.Points,
+			"role":      user.Role,
+			"avatar":    user.Avatar,
 		}).MustBase64()
 
 		http.SetCookie(w, &http.Cookie{
@@ -88,30 +97,53 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func registerHandler(w http.ResponseWriter, r *http.Request) {
+	if _, err := r.Cookie("auth"); err == nil {
+		http.Redirect(w, r, "/", http.StatusPermanentRedirect)
+		return
+	}
+
 	switch r.Method {
 	case "GET":
 		fullpath := filepath.Join(templateFolder, "register.html")
 		t := template.Must(template.ParseFiles(fullpath))
 
+		db, err := NewDB()
+		defer db.Close()
+		if err != nil {
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		dbTeams, _ := db.GetTeams()
 		data := map[string]interface{}{
 			"Host": host,
 		}
+
+		data["Teams"] = make([]map[string]string, 0)
+		for _, t := range dbTeams {
+			teams := data["Teams"].([]map[string]string)
+			data["Teams"] = append(teams, map[string]string{
+				"ID":   t.ID.Hex(),
+				"Name": t.Name,
+			})
+		}
+
 		t.Execute(w, data)
 	case "POST":
 		r.ParseForm()
 
 		user := User{
-			Username: r.FormValue("username"),
-			Fullname: r.FormValue("fullname"),
-			Password: encryptPassword(r.FormValue("password")),
-			Role:     "user",
-			Points:   0,
-			Avatar:   "",
+			Username:  r.FormValue("username"),
+			Fullname:  r.FormValue("fullname"),
+			Favourite: bson.ObjectIdHex(r.FormValue("favourite")),
+			Password:  encryptPassword(r.FormValue("password")),
+			Role:      "user",
+			Points:    0,
+			Avatar:    "",
 		}
 
 		db, err := NewDB()
 		defer db.Close()
-
 		if err != nil {
 			w.Write([]byte(err.Error()))
 			return

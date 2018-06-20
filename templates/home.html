@@ -1,11 +1,29 @@
 <html>
   <head>
     <title>World Cup: Home</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
   </head>
   <body>
-    {{range .Matches}}
-      {{.Host}} - {{.Guest}}: 0 - 0 <br>
-    {{end}}
+    <div class="container">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          World Cup Games:
+        </div>
+        <div class="panel-body">
+          <form action="/game" method="POST">
+            {{if .Matches}}
+              {{range .Matches}}
+                {{.Host}} - {{.Guest}}: <input type="text" name="{{.ID}}" size="3" pattern="[0-9]+:[0-9]+">
+                <br><br>
+              {{end}}
+              <input type="submit" value="Bet!">
+            {{else}}
+              No more matches for today.
+            {{end}}
+          </form>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

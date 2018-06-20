@@ -9,14 +9,12 @@ const (
 	host           = ":1914"
 )
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-
-}
-
 func main() {
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/register", registerHandler)
-	http.HandleFunc("/", gameHandler)
+	http.HandleFunc("/game", gameHandler)
+
+	http.HandleFunc("/", homeHandler)
 
 	http.ListenAndServe(host, nil)
 }
