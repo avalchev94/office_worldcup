@@ -18,7 +18,7 @@ func NewDB() (*Database, error) {
   if err != nil {
     log.Fatalln(err)
   }
-
+  log.Println(dialInfo)
   s, err := mgo.DialWithInfo(dialInfo)
 	if err != nil {
     log.Fatalln(err)
