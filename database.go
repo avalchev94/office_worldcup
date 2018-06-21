@@ -14,11 +14,14 @@ type Database struct {
 }
 
 func NewDB() (*Database, error) {
-  log.Println("New connection at: ", os.Getenv("MongoServer"))
-  s, err := mgo.Dial(os.Getenv("MongoServer"))
+  dialInfo, err := mgo.ParseURL(os.Getenv("MongoServer"))
+  if err != nil {
+    log.Fatalln(err)
+  }
+
+  s, err := mgo.DialWithInfo(dialInfo)
 	if err != nil {
-    log.Println(err)
-		return nil, err
+    log.Fatalln(err)
 	}
 
 	return &Database{s}, nil
