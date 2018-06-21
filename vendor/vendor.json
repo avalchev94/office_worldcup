@@ -3,6 +3,36 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "ll9P/RJVMjHcda52wGOjYFDQ6BA=",
+			"path": "github.com/globalsign/mgo",
+			"revision": "113d3961e7311526535a1ef7042196563d442761",
+			"revisionTime": "2018-06-15T13:49:36Z"
+		},
+		{
+			"checksumSHA1": "8M0m1bBTXUgVY4KcO7M+HOyf0+E=",
+			"path": "github.com/globalsign/mgo/bson",
+			"revision": "113d3961e7311526535a1ef7042196563d442761",
+			"revisionTime": "2018-06-15T13:49:36Z"
+		},
+		{
+			"checksumSHA1": "1iY8pZI4hTyFuQtdp5AWghFqs50=",
+			"path": "github.com/globalsign/mgo/internal/json",
+			"revision": "113d3961e7311526535a1ef7042196563d442761",
+			"revisionTime": "2018-06-15T13:49:36Z"
+		},
+		{
+			"checksumSHA1": "v3KpN1YL1/+YU9QgqgDl4kvvBco=",
+			"path": "github.com/globalsign/mgo/internal/sasl",
+			"revision": "113d3961e7311526535a1ef7042196563d442761",
+			"revisionTime": "2018-06-15T13:49:36Z"
+		},
+		{
+			"checksumSHA1": "AKJfdKarCr3wFfBFAc1DozFQqbA=",
+			"path": "github.com/globalsign/mgo/internal/scram",
+			"revision": "113d3961e7311526535a1ef7042196563d442761",
+			"revisionTime": "2018-06-15T13:49:36Z"
+		},
+		{
 			"checksumSHA1": "jWklrLjEiuvV6DZpcnGh/V3DRno=",
 			"path": "github.com/stretchr/objx",
 			"revision": "0ab728f62c7f6fcd754334f7931c2dd659dce1d1",
@@ -19,36 +49,6 @@
 			"path": "golang.org/x/crypto/blowfish",
 			"revision": "7f39a6fea4fe9364fb61e1def6a268a51b4f3a06",
 			"revisionTime": "2018-06-15T16:03:23Z"
-		},
-		{
-			"checksumSHA1": "YFQU7VULoTU4TwPz3V97b2exyxE=",
-			"path": "gopkg.in/mgo.v2",
-			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
-			"revisionTime": "2016-08-18T02:01:20Z"
-		},
-		{
-			"checksumSHA1": "Kpt9VvtG+deoQ+p34F2CeTofTik=",
-			"path": "gopkg.in/mgo.v2/bson",
-			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
-			"revisionTime": "2016-08-18T02:01:20Z"
-		},
-		{
-			"checksumSHA1": "9tMleZvl/yjpkj7oO3pOfZc+MJw=",
-			"path": "gopkg.in/mgo.v2/internal/json",
-			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
-			"revisionTime": "2016-08-18T02:01:20Z"
-		},
-		{
-			"checksumSHA1": "WnXjUmdgl3mTwwqYBxbO974iCe8=",
-			"path": "gopkg.in/mgo.v2/internal/sasl",
-			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
-			"revisionTime": "2016-08-18T02:01:20Z"
-		},
-		{
-			"checksumSHA1": "CrciG7woshiINwZxPsxisgDGL3Y=",
-			"path": "gopkg.in/mgo.v2/internal/scram",
-			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
-			"revisionTime": "2016-08-18T02:01:20Z"
 		}
 	],
 	"rootPath": "github.com/avalchev94/office_worldcup"

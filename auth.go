@@ -2,9 +2,9 @@ package main
 
 import (
 	"errors"
+	"github.com/globalsign/mgo/bson"
 	"github.com/stretchr/objx"
 	"golang.org/x/crypto/bcrypt"
-	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"path/filepath"
 	"text/template"

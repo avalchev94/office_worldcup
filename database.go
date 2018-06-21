@@ -2,8 +2,8 @@ package main
 
 import (
 	"errors"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 	"time"
   "os"
   "log"
@@ -14,17 +14,12 @@ type Database struct {
 }
 
 func NewDB() (*Database, error) {
-  dialInfo, err := mgo.ParseURL(os.Getenv("MongoServer"))
+  session, err := mgo.Dial(os.Getenv("MongoServer"))
   if err != nil {
     log.Fatalln(err)
   }
-  log.Println(dialInfo)
-  s, err := mgo.DialWithInfo(dialInfo)
-	if err != nil {
-    log.Fatalln(err)
-	}
 
-	return &Database{s}, nil
+	return &Database{session}, nil
 }
 
 func (db *Database) Close() {
