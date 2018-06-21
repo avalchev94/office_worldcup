@@ -48,10 +48,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		fullpath := filepath.Join(templateFolder, "login.html")
 		t := template.Must(template.ParseFiles(fullpath))
 
-		data := map[string]interface{}{
-			"Host": host,
-		}
-		t.Execute(w, data)
+		t.Execute(w, nil)
 
 	case "POST":
 		r.ParseForm()
@@ -116,10 +113,9 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 
 		dbTeams, _ := db.GetTeams()
 		data := map[string]interface{}{
-			"Host": host,
+			"Teams": make([]map[string]string, 0),
 		}
 
-		data["Teams"] = make([]map[string]string, 0)
 		for _, t := range dbTeams {
 			teams := data["Teams"].([]map[string]string)
 			data["Teams"] = append(teams, map[string]string{

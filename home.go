@@ -22,10 +22,9 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data := map[string]interface{}{
-			"Host": host,
+			"Matches": make([]map[string]string, 0),
 		}
 
-		data["Matches"] = make([]map[string]string, 0)
 		for _, m := range matchesDB {
 			if _, err := db.GetPrediction(m.ID, user.ID); err != nil {
 				host, _ := db.GetTeamByID(m.Host)

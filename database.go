@@ -5,6 +5,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
+  "os"
 )
 
 type Database struct {
@@ -12,12 +13,12 @@ type Database struct {
 }
 
 func NewDB() (*Database, error) {
-	session, err := mgo.Dial("localhost")
+  s, err := mgo.Dial(os.Getenv("MongoServer"))
 	if err != nil {
 		return nil, err
 	}
 
-	return &Database{session}, nil
+	return &Database{s}, nil
 }
 
 func (db *Database) Close() {

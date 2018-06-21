@@ -2,11 +2,11 @@ package main
 
 import (
 	"net/http"
+	"os"
 )
 
 const (
 	templateFolder = "templates"
-	host           = ":1914"
 )
 
 func main() {
@@ -16,5 +16,5 @@ func main() {
 
 	http.HandleFunc("/", homeHandler)
 
-	http.ListenAndServe(host, nil)
+	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 }
