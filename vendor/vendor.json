@@ -33,6 +33,12 @@
 			"revisionTime": "2018-06-15T13:49:36Z"
 		},
 		{
+			"checksumSHA1": "LxxjJ5wWRn4H7Mpt4FIf1hbF7+M=",
+			"path": "github.com/gorilla/mux",
+			"revision": "cb4698366aa625048f3b815af6a0dea8aef9280a",
+			"revisionTime": "2018-06-05T21:15:56Z"
+		},
+		{
 			"checksumSHA1": "jWklrLjEiuvV6DZpcnGh/V3DRno=",
 			"path": "github.com/stretchr/objx",
 			"revision": "0ab728f62c7f6fcd754334f7931c2dd659dce1d1",
