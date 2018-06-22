@@ -30,6 +30,7 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 						Match:     bson.ObjectIdHex(key),
 						User:      user.ID,
 						Predicted: value[0],
+						Score:     0,
 					}
 
 					if err = db.AddPrediction(p); err != nil {

@@ -4,9 +4,9 @@ import (
 	"errors"
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
+	"log"
+	"os"
 	"time"
-  "os"
-  "log"
 )
 
 type Database struct {
@@ -14,10 +14,10 @@ type Database struct {
 }
 
 func NewDB() (*Database, error) {
-  session, err := mgo.Dial(os.Getenv("MongoServer"))
-  if err != nil {
-    log.Fatalln(err)
-  }
+	session, err := mgo.Dial(os.Getenv("MongoServer"))
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	return &Database{session}, nil
 }
@@ -27,14 +27,14 @@ func (db *Database) Close() {
 }
 
 type User struct {
-	ID       bson.ObjectId `bson:"_id"`
-	Username string        `bson:"username"`
-	Fullname string        `bson:"fullname"`
-  Favourite bson.ObjectId `bson:"favourite"`
-	Password string        `bson:"password"`
-	Role     string        `bson:"role"`
-	Points   int32         `bson:"points"`
-	Avatar   string        `bson:"avatar"`
+	ID        bson.ObjectId `bson:"_id"`
+	Username  string        `bson:"username"`
+	Fullname  string        `bson:"fullname"`
+	Favourite bson.ObjectId `bson:"favourite"`
+	Password  string        `bson:"password"`
+	Role      string        `bson:"role"`
+	Points    int32         `bson:"points"`
+	Avatar    string        `bson:"avatar"`
 }
 
 func (db *Database) GetUser(username string) (User, error) {
@@ -60,7 +60,7 @@ func (db *Database) AddUser(user User) error {
 		return errors.New("already have such user")
 	}
 
-  user.ID = bson.NewObjectId()
+	user.ID = bson.NewObjectId()
 	err := users.Insert(&user)
 	return err
 }
@@ -71,13 +71,13 @@ type Team struct {
 }
 
 func (db *Database) GetTeams() ([]Team, error) {
-  teams := db.session.DB("world_cup").C("teams")
+	teams := db.session.DB("world_cup").C("teams")
 	if teams == nil {
 		return nil, errors.New("teams not found")
 	}
 
-  var result []Team
-  return result, teams.Find(nil).All(&result)
+	var result []Team
+	return result, teams.Find(nil).All(&result)
 }
 
 func (db *Database) GetTeamByID(id bson.ObjectId) (Team, error) {
@@ -103,17 +103,17 @@ type Match struct {
 }
 
 func (db *Database) GetMatch(id bson.ObjectId) (Match, error) {
-  matches := db.session.DB("world_cup").C("matches")
+	matches := db.session.DB("world_cup").C("matches")
 	if matches == nil {
 		return Match{}, errors.New("matches not found")
 	}
 
-  var match Match
-  if (matches.Find(bson.M{"_id":id}).One(&match) != nil) {
-    return Match{}, errors.New("match not found")
-  }
+	var match Match
+	if (matches.Find(bson.M{"_id": id}).One(&match) != nil) {
+		return Match{}, errors.New("match not found")
+	}
 
-  return match, nil
+	return match, nil
 }
 
 func (db *Database) GetTodayMatches() ([]Match, error) {
@@ -137,6 +137,7 @@ type Prediction struct {
 	Match     bson.ObjectId `bson:"match"`
 	User      bson.ObjectId `bson:"user"`
 	Predicted string        `bson:"predicted"`
+	Score     int32         `bson:"score"`
 }
 
 func (db *Database) GetPrediction(match, user bson.ObjectId) (Prediction, error) {
@@ -154,16 +155,16 @@ func (db *Database) GetPrediction(match, user bson.ObjectId) (Prediction, error)
 }
 
 func (db *Database) AddPrediction(p Prediction) error {
-  if _, err := db.GetPrediction(p.Match, p.User); err == nil {
-    return errors.New("user has predicted this game already")
-  }
+	if _, err := db.GetPrediction(p.Match, p.User); err == nil {
+		return errors.New("user has predicted this game already")
+	}
 
-  predictions := db.session.DB("world_cup").C("predictions")
-  if predictions == nil {
-    return errors.New("predictions not found")
-  }
+	predictions := db.session.DB("world_cup").C("predictions")
+	if predictions == nil {
+		return errors.New("predictions not found")
+	}
 
-  p.ID = bson.NewObjectId()
-  err := predictions.Insert(&p)
-  return err
+	p.ID = bson.NewObjectId()
+	err := predictions.Insert(&p)
+	return err
 }
