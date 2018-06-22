@@ -11,7 +11,7 @@
           World Cup Games:
         </div>
         <div class="panel-body">
-          <form action="/game" method="POST">
+          <form action="/bet" method="POST">
             {{if .Matches}}
               {{range .Matches}}
                 {{.Host}} - {{.Guest}}: <input type="text" name="{{.ID}}" size="3" pattern="[0-9]+:[0-9]+">

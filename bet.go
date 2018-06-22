@@ -1,17 +1,17 @@
 package main
 
 import (
-	"github.com/globalsign/mgo/bson"
+	"github.com/avalchev94/office_worldcup/database"
 	"net/http"
 	"regexp"
 )
 
-func gameHandler(w http.ResponseWriter, r *http.Request) {
+func betHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		if user, err := authenticated(w, r); err == nil {
 			r.ParseForm()
 
-			db, err := NewDB()
+			db, err := database.New()
 			defer db.Close()
 			if err != nil {
 				w.Write([]byte(err.Error()))
@@ -19,15 +19,15 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			for key, value := range r.Form {
-				if _, err := db.GetMatch(bson.ObjectIdHex(key)); err == nil {
+				if _, err := db.GetMatch(database.ObjectIdHex(key)); err == nil {
 					r, _ := regexp.Compile("[0-9]+:[0-9]+")
 					if !r.MatchString(value[0]) {
 						w.Write([]byte("Incorrect input"))
 						return
 					}
 
-					p := Prediction{
-						Match:     bson.ObjectIdHex(key),
+					p := database.Prediction{
+						Match:     database.ObjectIdHex(key),
 						User:      user.ID,
 						Predicted: value[0],
 						Score:     0,

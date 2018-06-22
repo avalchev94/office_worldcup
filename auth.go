@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"github.com/globalsign/mgo/bson"
+	"github.com/avalchev94/office_worldcup/database"
 	"github.com/stretchr/objx"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -19,18 +19,18 @@ func comparePasswords(encrypted, password string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(encrypted), []byte(password)) == nil
 }
 
-func authenticated(w http.ResponseWriter, r *http.Request) (User, error) {
+func authenticated(w http.ResponseWriter, r *http.Request) (database.User, error) {
 	c, err := r.Cookie("auth")
 	if err != nil || c.Value == "" {
 		http.Redirect(w, r, "/login", http.StatusPermanentRedirect)
-		return User{}, errors.New("auth cookie not found")
+		return database.User{}, errors.New("auth cookie not found")
 	}
 
 	m := objx.MustFromBase64(c.Value)
-	return User{
-		ID:        bson.ObjectIdHex(m["id"].(string)),
+	return database.User{
+		ID:        database.ObjectIdHex(m["id"].(string)),
 		Username:  m["username"].(string),
-		Favourite: bson.ObjectIdHex(m["favourite"].(string)),
+		Favourite: database.ObjectIdHex(m["favourite"].(string)),
 		Fullname:  m["fullname"].(string),
 		Role:      m["role"].(string),
 		Points:    int32(m["points"].(int)),
@@ -53,7 +53,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		r.ParseForm()
 
-		db, err := NewDB()
+		db, err := database.New()
 		defer db.Close()
 		if err != nil {
 			w.Write([]byte(err.Error()))
@@ -104,7 +104,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		fullpath := filepath.Join(templateFolder, "register.html")
 		t := template.Must(template.ParseFiles(fullpath))
 
-		db, err := NewDB()
+		db, err := database.New()
 		defer db.Close()
 		if err != nil {
 			w.Write([]byte(err.Error()))
@@ -128,17 +128,17 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		r.ParseForm()
 
-		user := User{
+		user := database.User{
 			Username:  r.FormValue("username"),
 			Fullname:  r.FormValue("fullname"),
-			Favourite: bson.ObjectIdHex(r.FormValue("favourite")),
+			Favourite: database.ObjectIdHex(r.FormValue("favourite")),
 			Password:  encryptPassword(r.FormValue("password")),
 			Role:      "user",
 			Points:    0,
 			Avatar:    "",
 		}
 
-		db, err := NewDB()
+		db, err := database.New()
 		defer db.Close()
 		if err != nil {
 			w.Write([]byte(err.Error()))

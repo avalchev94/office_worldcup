@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>Admin: Home</title>
+  </head>
+  <body>
+  {{if .Matches}}
+    <ul>
+    {{range .Matches}}
+      <li>{{.Host}} - {{.Guest}} on {{.Date}}
+        <form action="admin/finish/{{.ID}}" method="post">
+          <input type="text" name="result" size=3>
+          <input type="submit" value="Finish">
+        </form>
+      </li>
+    {{end}}
+    </ul>
+  {{else}}
+    No unfinished games.
+  {{end}}
+  <a href="admin/add">Add new match</a>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>World Cup: Highscore</title>
+  </head>
+  <body>
+    <table style="width:100%">
+      <tr>
+        <th>Username</th>
+        <th>Full Name</th>
+        <th>Points</th>
+        <th>Predictions</th>
+      </tr>
+      {{range .Users}}
+      <tr>
+        <th>{{.Username}}</th>
+        <th>{{.Fullname}}</th>
+        <th>{{.Score}}</th>
+        <th>{{.Predictions}}</th>
+      </tr>
+      {{end}}
+    </table>
+
+  </body>
+</html>

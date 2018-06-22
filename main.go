@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/avalchev94/office_worldcup/admin"
+	"github.com/gorilla/mux"
 	"net/http"
 	"os"
 )
@@ -10,11 +12,14 @@ const (
 )
 
 func main() {
-	http.HandleFunc("/login", loginHandler)
-	http.HandleFunc("/register", registerHandler)
-	http.HandleFunc("/game", gameHandler)
+	r := mux.NewRouter()
+	r.HandleFunc("/", homeHandler)
+	r.HandleFunc("/login", loginHandler)
+	r.HandleFunc("/register", registerHandler)
+	r.HandleFunc("/bet", betHandler)
+	r.HandleFunc("/highscore", highscoreHandler)
 
-	http.HandleFunc("/", homeHandler)
+	admin.Handle(r.PathPrefix("/admin").Subrouter())
 
-	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
+	http.ListenAndServe(":"+os.Getenv("PORT"), r)
 }

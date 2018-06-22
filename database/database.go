@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"errors"
@@ -9,11 +9,15 @@ import (
 	"time"
 )
 
+func ObjectIdHex(id string) bson.ObjectId {
+	return bson.ObjectIdHex(id)
+}
+
 type Database struct {
 	session *mgo.Session
 }
 
-func NewDB() (*Database, error) {
+func New() (*Database, error) {
 	session, err := mgo.Dial(os.Getenv("MongoServer"))
 	if err != nil {
 		log.Fatalln(err)
@@ -48,6 +52,17 @@ func (db *Database) GetUser(username string) (User, error) {
 		return User{}, errors.New("user not found")
 	}
 	return user, nil
+}
+
+func (db *Database) GetUsers() ([]User, error) {
+	users := db.session.DB("world_cup").C("users")
+	if users == nil {
+		return nil, errors.New("users collection not found")
+	}
+
+	var result []User
+	err := users.Find(nil).All(&result)
+	return result, err
 }
 
 func (db *Database) AddUser(user User) error {
@@ -132,6 +147,27 @@ func (db *Database) GetTodayMatches() ([]Match, error) {
 	return result, nil
 }
 
+func (db *Database) GetUnfinishedMatches() ([]Match, error) {
+	matches := db.session.DB("world_cup").C("matches")
+	if matches == nil {
+		return nil, errors.New("matches not found")
+	}
+
+	var result []Match
+	matches.Find(bson.M{"result": ""}).All(&result)
+
+	return result, nil
+}
+
+func (db *Database) UpdateMatch(m Match) error {
+	matches := db.session.DB("world_cup").C("matches")
+	if matches == nil {
+		return errors.New("matches not found")
+	}
+
+	return matches.Update(bson.M{"_id": m.ID}, &m)
+}
+
 type Prediction struct {
 	ID        bson.ObjectId `bson:"_id"`
 	Match     bson.ObjectId `bson:"match"`
@@ -154,6 +190,34 @@ func (db *Database) GetPrediction(match, user bson.ObjectId) (Prediction, error)
 	return p, nil
 }
 
+func (db *Database) GetPredictionsByMatch(match bson.ObjectId) ([]Prediction, error) {
+	predictions := db.session.DB("world_cup").C("predictions")
+	if predictions == nil {
+		return nil, errors.New("predictions not found")
+	}
+
+	var result []Prediction
+	if predictions.Find(bson.M{"match": match}).All(&result) != nil {
+		return nil, errors.New("no predictions for that match")
+	}
+
+	return result, nil
+}
+
+func (db *Database) GetPredictionsByUser(user bson.ObjectId) ([]Prediction, error) {
+	predictions := db.session.DB("world_cup").C("predictions")
+	if predictions == nil {
+		return nil, errors.New("predictions not found")
+	}
+
+	var result []Prediction
+	if predictions.Find(bson.M{"user": user}).All(&result) != nil {
+		return nil, errors.New("no predictions for that match")
+	}
+
+	return result, nil
+}
+
 func (db *Database) AddPrediction(p Prediction) error {
 	if _, err := db.GetPrediction(p.Match, p.User); err == nil {
 		return errors.New("user has predicted this game already")
@@ -167,4 +231,13 @@ func (db *Database) AddPrediction(p Prediction) error {
 	p.ID = bson.NewObjectId()
 	err := predictions.Insert(&p)
 	return err
+}
+
+func (db *Database) UpdatePrediction(p Prediction) error {
+	predictions := db.session.DB("world_cup").C("predictions")
+	if predictions == nil {
+		return errors.New("predictions not found")
+	}
+
+	return predictions.Update(bson.M{"_id": p.ID}, &p)
 }
