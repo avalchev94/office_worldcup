@@ -168,6 +168,16 @@ func (db *Database) UpdateMatch(m Match) error {
 	return matches.Update(bson.M{"_id": m.ID}, &m)
 }
 
+func (db *Database) AddMatch(m Match) error {
+	matches := db.session.DB("world_cup").C("matches")
+	if matches == nil {
+		return errors.New("matches not found")
+	}
+
+	m.ID = bson.NewObjectId()
+	return matches.Insert(&m)
+}
+
 type Prediction struct {
 	ID        bson.ObjectId `bson:"_id"`
 	Match     bson.ObjectId `bson:"match"`

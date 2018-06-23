@@ -2,14 +2,12 @@ package main
 
 import (
 	"github.com/avalchev94/office_worldcup/database"
-	"log"
 	"net/http"
 	"path/filepath"
 	"text/template"
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.URL)
 	if user, err := authenticated(w, r); err == nil {
 		db, err := database.New()
 		defer db.Close()

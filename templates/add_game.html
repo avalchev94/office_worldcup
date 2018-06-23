@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>Admin: Add game</title>
+  </head>
+  <body>
+    <form action="/admin/add" method="post">
+      <select name="host">
+      {{range .Teams}}
+        <option value="{{.ID}}">{{.Name}}</option>
+      {{end}}
+      </select>
+      :
+      <select name="guest">
+        {{range .Teams}}
+          <option value="{{.ID}}">{{.Name}}</option>
+        {{end}}
+      </select>
+      <input type="date" name="date">
+      <input type="time" name="time">
+      <input type="submit" value="add">
+    </form>
+  </body>
+</html>
