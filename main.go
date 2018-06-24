@@ -18,6 +18,7 @@ func main() {
 	r.HandleFunc("/register", registerHandler)
 	r.HandleFunc("/bet", betHandler)
 	r.HandleFunc("/highscore", highscoreHandler)
+	r.HandleFunc("/predictions", predictionsHandler)
 
 	admin.Handle(r.PathPrefix("/admin").Subrouter())
 

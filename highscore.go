@@ -47,7 +47,7 @@ func highscoreHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if users[i].Predictions != users[j].Predictions {
-				return users[i].Predictions > users[j].Predictions
+				return users[i].Predictions < users[j].Predictions
 			}
 
 			return users[i].Username > users[j].Username

@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>World Cup: Predictions</title>
+  </head>
+  <body>
+    <table style="width:100%">
+      <tr>
+        <th>Host</th>
+        <th>Guest</th>
+        <th>Result</th>
+        <th>Predicted</th>
+        <th>Points</th>
+      </tr>
+      {{range .Predictions}}
+      <tr>
+        <th>{{.Host}}</th>
+        <th>{{.Guest}}</th>
+        <th>{{.Result}}</th>
+        <th>{{.Predicted}}</th>
+        <th>{{.Score}}</th>
+      </tr>
+      {{end}}
+    </table>
+  </body>
+</html>
