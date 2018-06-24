@@ -20,7 +20,7 @@ func parseTime(dateStr, timeStr string) time.Time {
 		timeList[i], _ = strconv.Atoi(t)
 	}
 
-	return time.Date(dateList[0], time.Month(dateList[1]), dateList[2], timeList[0], timeList[1], 0, 0, time.Local)
+	return time.Date(dateList[0], time.Month(dateList[1]), dateList[2], timeList[0], timeList[1], 0, 0, time.Local).UTC()
 }
 
 func addGameHandler(w http.ResponseWriter, r *http.Request) {
