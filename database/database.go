@@ -140,7 +140,7 @@ func (db *Database) GetTodayMatches() ([]Match, error) {
 	var result []Match
 	matches.Find(bson.M{
 		"date": bson.M{
-			"$gt": time.Now(),
+			"$gt": time.Now().UTC(),
 		},
 	}).All(&result)
 
