@@ -136,13 +136,11 @@ func (db *Database) GetTodayMatches() ([]Match, error) {
 	if matches == nil {
 		return nil, errors.New("matches not found")
 	}
-	log.Println(time.Now())
-	log.Println(time.Now().UTC())
-	log.Println(time.Now().Local())
+
 	var result []Match
 	matches.Find(bson.M{
 		"date": bson.M{
-			"$gt": time.Now().UTC(),
+			"$gt": time.Now(),
 		},
 	}).All(&result)
 
