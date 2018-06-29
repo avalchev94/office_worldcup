@@ -109,10 +109,16 @@ func (db *Database) GetTeamByID(id bson.ObjectId) (Team, error) {
 	return t, nil
 }
 
+const (
+	GroupStage    = "group"
+	KnockoutStage = "knockout"
+)
+
 type Match struct {
 	ID     bson.ObjectId `bson:"_id"`
 	Host   bson.ObjectId `bson:"host"`
 	Guest  bson.ObjectId `bson:"guest"`
+	Stage  string        `bson:"stage"`
 	Result string        `bson:"result"`
 	Date   time.Time     `bson:"date"`
 }

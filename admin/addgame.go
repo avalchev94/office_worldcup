@@ -35,6 +35,10 @@ func addGameHandler(w http.ResponseWriter, r *http.Request) {
 		dbTeams, _ := db.GetTeams()
 		data := map[string]interface{}{
 			"Teams": make([]map[string]string, len(dbTeams)),
+			"Stages": []string{
+				database.GroupStage,
+				database.KnockoutStage,
+			},
 		}
 		for i, t := range dbTeams {
 			teams := data["Teams"].([]map[string]string)
@@ -54,6 +58,7 @@ func addGameHandler(w http.ResponseWriter, r *http.Request) {
 		match := database.Match{
 			Host:   database.ObjectIdHex(r.FormValue("host")),
 			Guest:  database.ObjectIdHex(r.FormValue("guest")),
+			Stage:  r.FormValue("stage"),
 			Result: "",
 			Date:   parseTime(r.FormValue("date"), r.FormValue("time")),
 		}

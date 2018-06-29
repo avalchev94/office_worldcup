@@ -8,51 +8,74 @@ import (
 	"strings"
 )
 
-func calculateScore(predicted, expected string) int32 {
-	getSign := func(result string) rune {
-		l := strings.Split(result, ":")
-		switch {
-		case l[0] == l[1]:
-			return 'X'
-		case l[0] > l[1]:
-			return '1'
-		default:
-			return '2'
-		}
+func getResultSign(result string) rune {
+	l := strings.Split(result, ":")
+	switch {
+	case l[0] == l[1]:
+		return 'X'
+	case l[0] > l[1]:
+		return '1'
+	default:
+		return '2'
 	}
+}
 
+func calculateGroupScore(predicted, expected string) int32 {
 	if predicted == expected {
 		return 4
-	} else if getSign(predicted) == getSign(expected) {
+	} else if getResultSign(predicted) == getResultSign(expected) {
 		return 2
 	} else {
 		return -1
 	}
 }
 
+func calculateKnockoutScore(predicted, expected, winner string) int32 {
+	prediction := strings.Split(predicted, ";")
+
+	score := calculateGroupScore(prediction[0], expected)
+	if getResultSign(expected) == 'X' {
+		score++
+		if prediction[1] == winner {
+			score++
+		} else {
+			score--
+		}
+	}
+
+	return score
+}
+
 func finishGameHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	regex, _ := regexp.Compile("[0-9]+:[0-9]+")
-	result := r.Form["result"][0]
+	result := r.FormValue("result")
 
 	if regex.Match([]byte(result)) {
 		db, _ := database.New()
 		defer db.Close()
 
 		matchID := database.ObjectIdHex(mux.Vars(r)["id"])
-		dbPredictions, err := db.GetPredictionsByMatch(matchID)
-		if err != nil {
-			w.Write([]byte(err.Error()))
-			return
-		}
+		match, _ := db.GetMatch(matchID)
+		dbPredictions, _ := db.GetPredictionsByMatch(matchID)
 
 		for _, p := range dbPredictions {
-			p.Score = calculateScore(p.Predicted, result)
+			switch match.Stage {
+			case database.GroupStage:
+				p.Score = calculateGroupScore(p.Predicted, result)
+			case database.KnockoutStage:
+				winner := r.FormValue("winner")
+				p.Score = calculateKnockoutScore(p.Predicted, result, winner)
+			}
 			db.UpdatePrediction(p)
 		}
 
-		match, _ := db.GetMatch(matchID)
-		match.Result = result
+		switch match.Stage {
+		case database.GroupStage:
+			match.Result = result
+		case database.KnockoutStage:
+			match.Result = result + ";" + r.FormValue("winner")
+		}
 		db.UpdateMatch(match)
 
 		http.Redirect(w, r, "/admin", http.StatusPermanentRedirect)

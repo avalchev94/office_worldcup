@@ -3,6 +3,7 @@
     <title>World Cup: Home</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <style>
     ul {
         list-style-type: none;
@@ -38,6 +39,13 @@
             {{if .Matches}}
               {{range .Matches}}
                 {{.Host}} - {{.Guest}}: <input type="text" name="{{.ID}}" size="3" pattern="[0-9]+:[0-9]+">
+
+                {{if eq .Stage "knockout"}}
+                <select name="{{.ID}}">
+                  <option value="1">{{.Host}}</option>
+                  <option value="2">{{.Guest}}</option>
+                </select>
+                {{end}}
                 <br><br>
               {{end}}
               <input type="submit" value="Bet!">
@@ -48,5 +56,37 @@
         </div>
       </div>
     </div>
+    <script>
+    $(function(){
+      $('select').prop('disabled', true)
+
+      $('input[type=submit]').on('click', function(){
+        $('select').prop('disabled', false)
+      });
+
+      $('input[type=text]').on('input', function(){
+        var selectTag = $('select[name='+$(this).attr('name')+']')
+
+        if (selectTag.length == 1) {
+          var disable = true
+          var regExp = new RegExp('^[0-9]+:[0-9]+$')
+          var result = $(this).val()
+
+          if (regExp.test(result)) {
+            var numbers = result.split(':')
+            if (numbers[0] == numbers[1]) {
+              disable = false
+            } else if (numbers[0] > numbers[1]) {
+              selectTag.val('1')
+            } else {
+              selectTag.val('2')
+            }
+          }
+
+          selectTag.prop('disabled', disable)
+        }
+      });
+    });
+    </script>
   </body>
 </html>

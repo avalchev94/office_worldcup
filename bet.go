@@ -6,8 +6,19 @@ import (
 	"regexp"
 )
 
+func formatPrediction(prediction []string) string {
+	switch len(prediction) {
+	case 1:
+		return prediction[0]
+	case 2:
+		return prediction[0] + ";" + prediction[1]
+	}
+
+	return ""
+}
+
 func betHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
+	if r.Method == http.MethodPost {
 		if user, err := authenticated(w, r); err == nil {
 			r.ParseForm()
 
@@ -29,7 +40,7 @@ func betHandler(w http.ResponseWriter, r *http.Request) {
 					p := database.Prediction{
 						Match:     database.ObjectIdHex(key),
 						User:      user.ID,
-						Predicted: value[0],
+						Predicted: formatPrediction(value),
 						Score:     0,
 					}
 

@@ -6,9 +6,15 @@
   {{if .Matches}}
     <ul>
     {{range .Matches}}
-      <li>{{.Host}} - {{.Guest}} on {{.Date}}
+      <li>{{.Host}} - {{.Guest}} on {{.Date}}, Stage: {{.Stage}}
         <form action="admin/finish/{{.ID}}" method="post">
           <input type="text" name="result" size=3>
+          {{if eq .Stage "knockout"}}
+          <select name="winner">
+            <option value="1">{{.Host}}</option>
+            <option value="2">{{.Guest}}</option>
+          </select>
+          {{end}}
           <input type="submit" value="Finish">
         </form>
       </li>

@@ -15,6 +15,10 @@
           <option value="{{.ID}}">{{.Name}}</option>
         {{end}}
       </select>
+      <select name="stage">
+        <option value="{{index .Stages 0}}">{{index .Stages 0}}</option>
+        <option value="{{index .Stages 1}}">{{index .Stages 1}}</option>
+      </select>
       <input type="date" name="date">
       <input type="time" name="time">
       <input type="submit" value="add">

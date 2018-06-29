@@ -36,6 +36,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 					"ID":    m.ID.Hex(),
 					"Host":  host.Name,
 					"Guest": guest.Name,
+					"Stage": m.Stage,
 					"Date":  m.Date.Format("15:04"),
 				})
 			}
