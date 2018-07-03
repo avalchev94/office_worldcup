@@ -34,7 +34,7 @@ func calculateKnockoutScore(predicted, expected, winner string) int32 {
 	prediction := strings.Split(predicted, ";")
 
 	score := calculateGroupScore(prediction[0], expected)
-	if getResultSign(expected) == 'X' {
+	if score > 0 && getResultSign(expected) == 'X' {
 		score++
 		if prediction[1] == winner {
 			score++
